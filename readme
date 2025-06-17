@@ -274,4 +274,59 @@ create peering connection edit route
 
 *************************************************************************
 
+efs storage
+create three instance
+linux 1a
+redhat 1b
+ubuntu 1a
+aws>efs>create>link>network>manage>change sg>attach>copy link--
+
+linux terminal
+
+ 1  yum install nfs-utils -y
+    2  mkdir efs
+    4 paste link sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 172.31.46.250:/ efs
+    5  df -h
+    6  cd /root/efs
+    7  touch hi.txt{1..10}
+    8  ll
+redhat
+
+1  yum install nfs-utils -y
+    2  systemctl restart nfs-utils
+    3  systemctl enable nfs-utils
+    4  mkdir efs
+    5  sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 172.31.46.250:/ efs
+    6  cd /root/efs
+    7  ll
+ubuntu
+
+1  apt-get update
+    2  apt install nfs-common
+    3  mkdir efs
+    4  sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport 172.31.46.250:/ efs
+    5  cd /root/efs
+    6  ll
+*******************************************************************
+
+nat gate
+
+vpc 1      }
+int gtw 1
+subnet 2    }associate
+rt 2
+private sub with nat gate
+public sub with int gtw
+inst http 88, tcp 22
+
+1 yum install httpd -y
+2  cd /var/www/html
+3  echo "this is my server" >> index.html
+4  ll
+5  cat index.html
+6  systemctl restart httpd
+7  systemctl enable httpd
+
+***************************************************************
+
 
