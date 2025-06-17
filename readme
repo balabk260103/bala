@@ -1,0 +1,246 @@
+**************************************************************************************************
+dev-server t2.micro 8gb
+connect
+sudo su -
+hostnamectl set-hostname devserver.example.com
+bash
+create a repo in git
+    1  yum install git -y
+    2  git clone https://github.com/AryanS1508/Aryan_10743412.git
+    3  cd Aryan_10743412/
+    4  ll
+    5  cd
+    6  mkdir /project-x
+    7  cd /project-x
+    8  cd
+    9  cd Aryan_10743412/
+   10  cp -rvf * /project-x/
+   11  cd
+   12  cd /project-x/
+   13  ll
+   14  git init
+   15  git add .
+   16  git status
+   17  git commit -m devops -a
+   18  cd
+   19  ssh-keygen
+   20  cd .ssh/
+   21  cat id_rsa.pub
+   22  cd
+   23  cd /project-x
+   29  git init
+   30  git commit -m "first commit"
+   31  git branch -M main
+   32  git remote add origin https://github.com/balabk260103/aaaaaaaaaaa.git
+   33  git push -u origin main
+   34  history
+
+jenkins t2.medium 20gb
+sudo su -
+hostnamectl set-hostname jenkins.example.com
+bash
+    1  cat /etc/os-release
+    2  sudo yum update –y
+    3  sudo wget -O /etc/yum.repos.d/jenkins.repo     https://pkg.jenkins.io/redhat-stable/jenkins.repo
+    4  sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    5  sudo yum upgrade
+    6  sudo yum install java-17-amazon-corretto -y
+    7  sudo yum install jenkins -y
+    8  sudo systemctl enable jenkins
+    9  sudo systemctl start jenkins
+   10  sudo systemctl status jenkins
+   copy public ip :8080
+   11  cat /var/lib/jenkins/secrets/initialAdminPassword
+   copy password
+   profile -> security -> token -> git weebhook
+plugins -> maven github deploy
+   12  yum install maven
+   13  yum install git -y
+   14  git init
+   15  mvn -v
+  java path
+  maven path
+   16  history
+
+tomcat t2.micro 15gb
+sudo su -
+hostnamectl set-hostname tomcat.example.com
+bash
+   1  yum install java*
+    2  yum install wget
+    3  wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
+    4  tar -xvzf apache-tomcat-9.0.106.tar.gz
+    5  cd apache-tomcat-9.0.106/
+    6  cd bin/
+    7  chmod +x startup.sh
+    8  chmod +x shutdown.sh
+    9  cd
+   10  cd apache-tomcat-9.0.106/
+   11  find -name context.xml
+   12  vi ./webapps/examples/META-INF/context.xml
+   13  vi ./webapps/host-manager/META-INF/context.xml
+   14  vi ./webapps/manager/META-INF/context.xml
+   15  cd conf
+   16  vi tomcat-users.xml
+
+paste 
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx"/>
+<role rolename="manager-status"/>   
+<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
+<user username="deployer" password="deployer" roles="manager-script"/>
+<user username="tomcat" password="s3cret" roles="manager-gui"/>
+   17  cd ..
+   18  cd /bin/
+   19  ./startup.sh
+   20  ll
+   21  cd
+   22  cd apache-tomcat-9.0.106/
+   23  ll
+   24  cd bin/
+   25  ll
+   26  ./startup.sh
+   27  history
+
+**/*.war
+/
+
+**********************************************************************************************************************************
+
+userdata
+adv setting 
+#!/bin/bash
+yum install httpd -y
+echo "This server is running in the aws cloud" >> var/www/html/index.html
+systemctl start httpd
+systemctl enable httpd
+useradd sanjay -p redhat -c "created"
+ public ip paste
+    1  cd /var/www/html/
+    2  ll
+    3  cat index.html
+    4  tail /etc/passwd
+    5  tail /etc/shadow
+    6  history
+
+*********************************************************************************************************************
+create ami 
+      yum install docker*
+    9  yum install vsftpd -y
+   10  yum install dns*
+   11  yum install nfs-utils -y
+   12  yum install cifs-utils -y
+   13  touch bala.txt
+   14  cat > bala.txt
+   15  history
+
+create image
+delete server
+ami instance launch 
+check
+ ***************************************************************
+ebs
+
+
+    1  df -h
+    2  mkfs.ext2 /dev/xvdb
+    3  mkdir /data
+    4  mount /dev/xvdb /data
+    5  df -h
+    6  cd /data
+    7  touch bala{1..100}
+    8  ll
+    9  exit
+   10  history
+   11  cd /data
+   12  ll
+   16  cd
+   17  mount /dev/xvdb /data
+   18  cd /data
+   19  ll
+   20  history
+   21  blkid
+copy uuid 
+   22  cd
+   23  vim /etc/fstab
+uuid=number    /data ext4 defaults 0 0
+exit
+   24  systemctl daemon-reload
+   25  df -h
+   26  history
+
+**************************************************
+ To resize root vol:
+ lsblk
+ growpart /dev/xvda 1
+ xfs_growfs /
+ df -h
+ history
+**************************
+To move from one server to another
+
+1.Create instance 
+2.create vol 
+3.attach vol
+connect instance
+     sudo su -
+     1.lsblk
+    2  mkfs.ext4 /dev/sdb
+    3  mkdir /data
+    4  mount /dev/xvdb /data
+    5  df -h
+    6  cd /data
+    7  touch devops.txt{1..100}
+    8  ll
+    9  history
+snapshot move
+
+1.create instance
+snapshot to vol
+attach to instance
+ 1  lsblk
+    2  mkdir /data
+    3  mount /dev/xvdb /data/
+    4  df -h
+    5  cd /data
+    6  ll
+    7  history
+
+**********************************************************************
+vpc peering
+
+region -1
+vpc
+create vpc
+vpc only
+name : dev-vpc
+10.0.0.0/16
+create vpc
+
+IGW:
+name:dev-igw
+create igw
+attach to vpc
+
+subnet:
+public-subnet
+us-east-1a
+10.0.0.0/24
+create subnet
+
+private-subnet
+us-east-1b
+10.0.0.0/16
+10.0.1.0/24
+create subnet
+
+Route tables:
+2 rt
+associate with subnet
+edit route 
+igw public link
+
+
+
+
