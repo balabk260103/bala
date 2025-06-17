@@ -242,5 +242,36 @@ edit route
 igw public link
 
 
+launch 2 instances 
+public private sg -http icmp
+
+public launch 
+
+
+     1  yum install httpd -y
+    2  cd /var/www/html
+    3  echo "This is a public server" > index.html
+    4  ll
+    5  systemctl start httpd
+    6  systemctl enable httpd
+    7  ping 10.0.1.151
+    8  cd
+    9  ping 10.0.1.151
+   10  history
+
+same steps
+
+set password
+vim /etc/ssh/sshd_config
+systemctl restart sshd
+systemctl enable sshd
+
+ cat > bala.txt
+ scp bala.txt root@3.138.135.242:/tmp
+
+create peering connection edit route
+
+
+*************************************************************************
 
 
