@@ -84,6 +84,7 @@ bash
    16  vi tomcat-users.xml
 
 paste 
+without comments
 <role rolename="manager-gui"/>
 <role rolename="manager-script"/>
 <role rolename="manager-jmx"/>
@@ -91,20 +92,21 @@ paste
 <user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
 <user username="deployer" password="deployer" roles="manager-script"/>
 <user username="tomcat" password="s3cret" roles="manager-gui"/>
-   17  cd ..
-   18  cd /bin/
-   19  ./startup.sh
-   20  ll
    21  cd
    22  cd apache-tomcat-9.0.106/
    23  ll
    24  cd bin/
    25  ll
    26  ./startup.sh
-   27  history
 
+copy public ip from tomcat instance 
+paste it:8080 --> page 
+jenkins --> new item --> maven --> give things 
 **/*.war
 /
+build now
+
+it will work
 
 **********************************************************************************************************************************
 
