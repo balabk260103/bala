@@ -616,3 +616,5 @@ java.net.ConnectException: Connection refused
 Build step 'Deploy war/ear to a container' marked build as failure
 SSH: Current build result is [FAILURE], not going to run.
 Finished: FAILURE
+
+DAY-1 Project Milestone 2 - Create an end to end CI/CD pipeline in AWS platform using Jenkins as the orchestration tool, Github as the SCM, Maven as the Build tool, Deploy in a docker instance and create a Docker image, Store the docker image in ECR, Achieve Kubernetes deployment using the ECR image. Build a sample java web app using maven. + SME Connect
