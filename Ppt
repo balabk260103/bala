@@ -1,0 +1,52 @@
+•Automate the deployment of a Java web app using CI/CD practices.
+•Utilize AWS services with Jenkins, Docker, ECR, and Kubernetes.
+•Ensure smooth integration from code commit to deployment.
+
+
+Git & GitHub – Source Code Management
+•Jenkins – CI/CD Orchestration
+•Maven – Build Tool
+•Docker – Containerization
+•Amazon EC2, ECR – Hosting & Image Registry
+•Kubernetes (EKS) – Deployment
+
+
+1. Code pushed to GitHub
+•2. Jenkins pulls code and builds with Maven
+•3. Docker image built and pushed to ECR
+•4. Kubernetes (EKS) deploys from ECR
+•5. Application served via service IP
+
+Jenkins installed on EC2 instance
+•Integrated with GitHub via Webhooks
+•WAR deployed on Tomcat using post-build actions
+•Changes reflected automatically
+
+Docker installed on a separate EC2 instance
+•Image built from Java project using Jenkins
+•Image pushed to local Docker host
+•Post-build action configured with SSH
+
+
+EKS Cluster setup via AWS CLI
+•Wrote deployment.yml and service.yml
+•Pods created and service exposed
+•Output tested via browser
+
+
+Code Commit → GitHub
+•Webhook triggers Jenkins build
+•Build WAR → Docker Image → ECR
+•Kubernetes pulls and deploys image
+•Live Application Served
+
+
+
+Application deployed successfully on EKS
+•✔ Verified by accessing service IP via browser
+•✔ Pods and services are running as expected
+
+Complete automation achieved from code to deployment.
+•Successfully integrated Jenkins, Docker, ECR, Kubernetes.
+•Scalable and repeatable DevOps pipeline implemented.
+
