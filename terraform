@@ -1,0 +1,220 @@
+provider "aws" {
+  region = "us-east-1"
+
+}
+
+#This is VPC code
+
+resource "aws_vpc" "bala-test-vpc" {
+  cidr_block = "10.0.0.0/16"
+}
+
+# this is Subnet code
+resource "aws_subnet" "public-subnet" {
+  vpc_id            = aws_vpc.test-vpc.id
+  availability_zone = "us-east-1a"
+  cidr_block        = "10.0.0.0/24"
+
+  tags = {
+    Name = "Public-subnet"
+  }
+}
+
+
+resource "aws_subnet" "private-subnet" {
+  vpc_id            = aws_vpc.test-vpc.id
+  availability_zone = "us-east-1a"
+  cidr_block        = "10.0.1.0/24"
+
+  tags = {
+    Name = "Private-subnet" #security group
+  }
+}
+resource "aws_security_group" "test_access" {
+  name        = "test_access"
+  vpc_id      = aws_vpc.test-vpc.id
+  description = "allow ssh and http"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
+}
+#security group end here#internet gateway code
+resource "aws_internet_gateway" "bala-test-igw" {
+  vpc_id = aws_vpc.test-vpc.id
+
+  tags = {
+    Name = "test-igw"
+  }
+}
+
+
+#Public route table code
+
+resource "aws_route_table" "public-rt" {
+  vpc_id = aws_vpc.test-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.test-igw.id
+  }
+
+
+  tags = {
+    Name = "public-rt"
+
+  }
+}
+#route Tatable assosication code
+resource "aws_route_table_association" "public-asso" {
+  subnet_id      = aws_subnet.public-subnet.id
+  route_table_id = aws_route_table.public-rt.id
+}
+#ec2 code
+resource "aws_instance" "bala-server" {
+  ami             = "ami-05ffe3c48a9991133"
+  subnet_id       = aws_subnet.public-subnet.id
+  instance_type   = "t2.micro"
+  security_groups = ["${aws_security_group.test_access.id}"]
+  key_name        = "bala-key-pair-name"
+  tags = {
+    Name     = "test-World"
+    Stage    = "testing"
+    Location = "chennai"
+  }
+
+}
+
+
+##create an EIP for EC2
+resource "aws_eip" "bala-ec2-eip" {
+  instance = aws_instance.manas-server.id
+}
+
+#ssh keypair code
+resource "aws_key_pair" "ltimindtree" {
+  key_name   = "ltikey"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCewePHnRrj7Fa4IuH0xvMDVdHDlIQqGrhl5lCSqIo1s9C7dVHH5Hwv2mJtJzFiBHqrLRngc1/aylgDYJOAzY40FfRYV2av1nKx7oCGxbQ+Dkzhu3iOmWJn9l7d9/rNv/dZLoW7bLLEBXovqTUU/A0yVVpOIJewJDZrv7IozC+BkhLrHvzJqfSsY9RQDedB3TFxyv9Ui41uXaXR63HguBYYGPYO+pfGrWu28kk7o7MDxoNW+TtoOH7ay8B4vahMOVYC0nGLcxT9x78uyRKnM1E0jDZI15qRYDO+TdXQBsJXALk9ujPELrYpvQV3i/9++YQGTbRcQPqIBoJzyogdxE1LTG4zBvvwN25XBbMP0g/JHIoL58pLzJkMT2+ylifhDxd8L1CAq6VoOb33ChOxcMM6H0jJbtEgVOo42xQzGUGVp4NADJnFo+a3ZaxYMX/pCQSRS0CWN42WH82NeTPvUyQyLiRHLuwMf0JsT4R3kRXNP6M6JAqh1xByzq6A+QnvGDU= root@terraform.example.com"
+}
+
+###this is database ec2 code
+resource "aws_instance" "database-server" {
+  ami             = "ami-05ffe3c48a9991133"
+  subnet_id       = aws_subnet.private-subnet.id
+  instance_type   = "t2.micro"
+  security_groups = ["${aws_security_group.test_access.id}"]
+  key_name        = "ltikey"
+  tags = {
+    Name     = "db-World"
+    Stage    = "stage-base"
+    Location = "delhi"
+  }
+
+}
+##create a public ip for Nat gateway
+resource "aws_eip" "nat-eip" {
+}
+### create Nat gateway
+resource "aws_nat_gateway" "my-ngw" {
+  allocation_id = aws_eip.nat-eip.id
+  subnet_id     = aws_subnet.public-subnet.id
+}
+
+#create private route table
+resource "aws_route_table" "private-rt" {
+  vpc_id = aws_vpc.test-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.my-ngw.id
+  }
+
+
+  tags = {
+    Name = "private-rt"
+  }
+}
+##route Tatable assosication code
+resource "aws_route_table_association" "private-asso" {
+  subnet_id      = aws_subnet.private-subnet.id
+  route_table_id = aws_route_table.private-rt.id
+}
+
+
+
+
+[root@terraform terra]# terraform validate
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 14, in resource "aws_subnet" "public-subnet":
+│   14:   vpc_id            = aws_vpc.test-vpc.id
+│
+│ A managed resource "aws_vpc" "test-vpc" has not been declared in the root module.
+╵
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 25, in resource "aws_subnet" "private-subnet":
+│   25:   vpc_id            = aws_vpc.test-vpc.id
+│
+│ A managed resource "aws_vpc" "test-vpc" has not been declared in the root module.
+╵
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 35, in resource "aws_security_group" "test_access":
+│   35:   vpc_id      = aws_vpc.test-vpc.id
+│
+│ A managed resource "aws_vpc" "test-vpc" has not been declared in the root module.
+╵
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 63, in resource "aws_internet_gateway" "bala-test-igw":
+│   63:   vpc_id = aws_vpc.test-vpc.id
+│
+│ A managed resource "aws_vpc" "test-vpc" has not been declared in the root module.
+╵
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 74, in resource "aws_route_table" "public-rt":
+│   74:   vpc_id = aws_vpc.test-vpc.id
+│
+│ A managed resource "aws_vpc" "test-vpc" has not been declared in the root module.
+╵
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 78, in resource "aws_route_table" "public-rt":
+│   78:     gateway_id = aws_internet_gateway.test-igw.id
+│
+│ A managed resource "aws_internet_gateway" "test-igw" has not been declared in the root module.
+╵
+╷
+│ Error: Reference to undeclared resource
+│
+│   on ec2.tf line 110, in resource "aws_eip" "bala-ec2-eip":
+│  110:   instance = aws_instance.manas-server.id
+│
+│ A managed resource "aws_instance" "manas-server" has not been declared in the root module.
