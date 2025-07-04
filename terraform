@@ -218,3 +218,21 @@ resource "aws_route_table_association" "private-asso" {
 │  110:   instance = aws_instance.manas-server.id
 │
 │ A managed resource "aws_instance" "manas-server" has not been declared in the root module.
+
+
+
+│ Error: creating EC2 EIP: operation error EC2: AllocateAddress, https response error StatusCode: 400, RequestID: 734c0564-1b8b-43ed-87c2-bb25c52d2fb3, api error AddressLimitExceeded: The maximum number of addresses has been reached.
+│
+│   with aws_eip.bala-ec2-eip,
+│   on ec2.tf line 109, in resource "aws_eip" "bala-ec2-eip":
+│  109: resource "aws_eip" "bala-ec2-eip" {
+│
+╵
+╷
+│ Error: importing EC2 Key Pair (ltikey): operation error EC2: ImportKeyPair, https response error StatusCode: 400, RequestID: 4e4fe57a-f0d4-4278-bfd2-c4111006f4d9, api error InvalidKeyPair.Duplicate: The keypair already exists
+│
+│   with aws_key_pair.ltimindtree,
+│   on ec2.tf line 114, in resource "aws_key_pair" "ltimindtree":
+│  114: resource "aws_key_pair" "ltimindtree" {
+│
+╵
